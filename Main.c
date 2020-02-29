@@ -4,16 +4,13 @@
 #include <string.h>
 #include <locale.h>
 #include <ctype.h>
-#include "estoque.h"
 
 /*Definindo os Tipos de Registros*/
 typedef struct {
-	int Indice;
-    char codigo[4];
+    char codigo[10];
     char nome[100];
     float Preco;
     char TipoRemedio;
-    char CRM[25];
 }EstruturaRemedio;
 
 /*Declarando os Registros Globais*/
@@ -30,13 +27,10 @@ void ImprimeTodosRegistros(){
     {   	
     	fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
     	if (!(feof(Arquivo))){
-    		printf("Indice %d: \n", Ler.Indice);
         	printf("ITEM Nº %d: \n", cont);
         	printf("CÓDIGO: %s\n",Ler.codigo);
         	printf("NOME: %s\n",Ler.nome);
-        	printf("PREÇO: R$ %.2f\n",Ler.Preco);
-        	Ler.TipoRemedio=='S'?printf("Obrigatório Reter a Receita: Sim\nCRM do Médico: %s\n\n",Ler.CRM):printf("Obrigatório Reter a Receita: Não\n\n");
-			//printf("\n\n",Ler.CRM);
+        	printf("PREÇO: R$ %.2f\n\n",Ler.Preco);
 			cont++;
 		}
 		else if (cont == 1){
@@ -55,51 +49,76 @@ void ExcluirTodos(){
 }
 
 /*Método que Exclui um registro*/
+/*1 - Excluir por Código*/
+/*2 - Excluir por Nome*/
 void ExcluiRegistro(int Tipo, char Pesquisa[]){
 	FILE *Arquivo = fopen("arquivo", "ab+");
+	fseek(Arquivo, 0, SEEK_END);
 	int QTD = ftell (Arquivo);
-	QTD = QTD / 140;
-	//EstruturaRemedio NovoArquivo[QTD];
+	QTD = QTD / 120;
+	fclose(Arquivo);
 	
+	EstruturaRemedio NovoArquivo[QTD];
+	Arquivo = fopen("arquivo", "ab+");
 	int cont = 0;
-	
-    while(!(feof(Arquivo)))
-    {   	
-    	fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
-    	if (!(feof(Arquivo))){
-    		printf("Indice %d: \n", Ler.Indice);
-        	printf("ITEM Nº %d: \n", cont);
-        	printf("CÓDIGO: %s\n",Ler.codigo);
-        	printf("NOME: %s\n",Ler.nome);
-        	printf("PREÇO: R$ %.2f\n",Ler.Preco);
-        	Ler.TipoRemedio=='S'?printf("Obrigatório Reter a Receita: Sim\nCRM do Médico: %s\n\n",Ler.CRM):printf("Obrigatório Reter a Receita: Não\n\n");
-			//printf("\n\n",Ler.CRM);
-			cont++;
-		}
-		else if (cont == 1){
-			printf("Arquivo sem nenhum registro de medicamento!\n\n");
-		}
-    }
-    fclose(Arquivo);
-	
-	
-/*	
 	switch(Tipo){
 		case 1:
-			Ler.codigo !=  Pesquisa ? NovoArquivo[cont] = Ler : printf("");
+		for(int i = 0; i < QTD;i++){
+			fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
+			if((Tipo == 1) && (Ler.codigo != Pesquisa)){
+				NovoArquivo[i] = Ler;
+			}
+			else{
+				printf("Atenção! Este registro será excluido:");
+				printf("CÓDIGO: %s\n",Ler.codigo);
+				printf("NOME: %s\n",Ler.nome);
+				printf("PREÇO: R$ %.2f\n",Ler.Preco);
+				Ler.TipoRemedio=='S'?printf("Obrigatório Reter a Receita: Sim\n-\n\n"):printf("Obrigatório Reter a Receita: Não\n\n");
+			}
+		}
 			break;
 		case 2:
-			Ler.nome !=  Pesquisa ? NovoArquivo[cont] = Ler : printf("");
+		for(int i = 0; i < QTD;i++){
+			fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
+			if((Tipo == 2) && (Ler.nome != Pesquisa)){
+				NovoArquivo[i] = Ler;
+			}
+			else{
+				printf("Atenção! Este registro será excluido:\n");
+				printf("CÓDIGO: %s\n",Ler.codigo);
+				printf("NOME: %s\n",Ler.nome);
+				printf("PREÇO: R$ %.2f\n\n",Ler.Preco);
+				Ler.TipoRemedio=='S'?printf("Obrigatório Reter a Receita: Sim\n\n"):printf("Obrigatório Reter a Receita: Não\n\n");
+			}
+		}
 			break;
 	}
-*/
+	fclose(Arquivo);
+	int QTD2 = QTD - cont;
+	char confirma;
+	printf("Confirma exclusão dos registros demonstrados?\n");
+	printf("S - Sim\n");
+	printf("N - Não\n");
+	scanf("%s",&confirma);
+	if((confirma == 's')||(confirma == 'S')){
+		Arquivo = fopen("arquivo", "wb+");
+		
+		for(int i = 0; i < QTD2;i++){
+			fwrite(&NovoArquivo[i], sizeof(EstruturaRemedio), 1, Arquivo);
+		}
+		
+		printf("Registros Excluidos com Sucesso!");
+		fclose(Arquivo);
+	}
+	else{
+		printf("Operação Cancelada com sucesso!");
+	}
 }
 
 /*Método Principal*/
 int main()
 {
 	setlocale(LC_ALL, NULL);
-	Estoque();
 	system("chcp 1252 > nul");
     FILE *Pont_Arq;
 
@@ -117,13 +136,13 @@ int main()
     do{
         Selecao = 0;
         //Exibindo o menu
-        printf("Sistema de Gerenciamento de Farmacias:\n");
-        printf("Digite o codigo referente a operacao que deseja executar:\n");
+        printf("Bem Vindos ao cadastro de Medicamentos:\n");
+        printf("Digite o codigo referente a operacao que deseja executar.\n");
         printf("1 - Cadastrar Novo Medicamento\n");
         printf("2 - Excluir um Medicamento\n");
         printf("3 - Editar um Medicamento\n");
         printf("4 - Consultar um Medicamento\n");
-        printf("5 - Imprimir as Informacoes de um Medicamento\n");
+        printf("5 - Imprimir Todos os Medicamentos\n");
         printf("0 - Sair do Sistema\n");
 
         //Lendo a operação
@@ -139,13 +158,6 @@ int main()
             	EstruturaRemedio Cadastrar;
 				fread(&Ler, sizeof(EstruturaRemedio), 2, Pont_Arq);
 				
-				if(Ler.Indice == 0){
-					Cadastrar.Indice = 1;
-					
-				}
-				else{
-					Cadastrar.Indice = Ler.Indice+1;
-				}
 		       	printf("Cadastrar Registros de Medicamentos\n");
             	
             	//Solicita as Informações para Cadastrar
@@ -164,11 +176,11 @@ int main()
                 scanf("%s", &Cadastrar.TipoRemedio);
                 Cadastrar.TipoRemedio = toupper(Cadastrar.TipoRemedio); 
 
-                if(Cadastrar.TipoRemedio == 'S'){
+               /* if(Cadastrar.TipoRemedio == 'S'){
                     printf("Digite o CRM do Médico que receitou:\n");
                     scanf("%s",Cadastrar.CRM);
                     //Cadastrar.CRM = toupper(Cadastrar.CRM); 
-                }
+                }*/
                 
                 if(Cadastrar.TipoRemedio != 0){
                 	fwrite(&Cadastrar, sizeof(EstruturaRemedio), 1, Pont_Arq);
@@ -188,6 +200,7 @@ int main()
 				printf("3 - Excluir Registros por Nome.\n");
 				scanf("%d",&Op);
 				switch(Op){
+					char pesquisa[100];
 					case 1 :
 						printf("Atenção, tal operação excluira os seguintes registros:\n");
 						ImprimeTodosRegistros();
@@ -197,10 +210,16 @@ int main()
 						scanf("%s",&confirma);
 						confirma=='S'?ExcluirTodos():printf("Operação Cancelada!\n\n");				
 						break;
-					case 2 :			
+					case 2 :	
+						printf("Digite o código que deseja excluir:");
+						scanf("%s",pesquisa);
+						ExcluiRegistro(1,pesquisa);
+						
 						break;			
 					case 3:
-						break;
+						printf("Digite o código que deseja excluir:");
+						scanf("%s",pesquisa);
+						ExcluiRegistro(2,pesquisa);
 					default:
 						printf("Código digitado é invalido, favor refazer a operação!\n\n");
 						
