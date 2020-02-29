@@ -4,6 +4,7 @@
 #include <string.h>
 #include <locale.h>
 #include <ctype.h>
+//#include "estoque.h"
 
 /*Definindo os Tipos de Registros*/
 typedef struct {
