@@ -10,7 +10,7 @@ typedef struct {
     char nome[100];
     float Preco;
     char TipoRemedio;
-    char CRM[25];
+    //char CRM[25];
     int Quantidade;
 }Controle_Estoque;
 Controle_Estoque Opera_estoque;
@@ -22,7 +22,7 @@ typedef struct {
     char estoquenome[100];
     float estoquePreco;
     char estoqueTipoRemedio;
-    char estoqueCRM[25];
+    //char estoqueCRM[25];
 }EstruturaRemedio_estoque;
 EstruturaRemedio_estoque Estoque_Ler;
 
@@ -31,13 +31,13 @@ EstruturaRemedio_estoque Estoque_Ler;
 //void Historico_venda(){}
 
 int Vender(char estoque_cod[], char estoque_nom[], float estoque_prec,
-			char estoque_tiporemedio, char estoque_crm[])
+			char estoque_tiporemedio )
 {
 	return 0;
 }
 
 int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
-			char estoque_tiporemedio, char estoque_crm[])
+			char estoque_tiporemedio )
 {
 	FILE *Pont_estoque;
     Pont_estoque = fopen("controle_estoque", "ab+"); 
@@ -46,7 +46,7 @@ int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
     strcpy(Opera_estoque.nome, estoque_nom)         ;
     Opera_estoque.Preco        = estoque_prec       ;
     Opera_estoque.TipoRemedio  = estoque_tiporemedio;
-    strcpy(Opera_estoque.CRM, estoque_crm)          ;
+    //strcpy(Opera_estoque.CRM, estoque_crm)          ;
     Opera_estoque.Quantidade   = 1                  ;
 	fwrite(&Opera_estoque, sizeof(Controle_Estoque), 1, Pont_estoque);
 	fclose(Pont_estoque);
@@ -59,7 +59,7 @@ int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 	printf("CÓDIGO: %s\n",Opera_estoque.nome);
 	printf("CÓDIGO: %f\n",Opera_estoque.Preco );
 	printf("CÓDIGO: %c\n",Opera_estoque.TipoRemedio);
-	printf("CÓDIGO: %s\n",Opera_estoque.CRM);
+	//printf("CÓDIGO: %s\n",Opera_estoque.CRM);
 	printf("CÓDIGO: %d\n",Opera_estoque.Quantidade );
 
 	
@@ -74,60 +74,59 @@ int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 void buscaitem(int estoque_operacao)
 {
 	//int estoque_cont = 1; 
-	char est_cod[4];
+	char est_cod[10];
 	char est_nom[100];
 	float est_prec;
 	char est_tiporemedio;
-	char est_crm[25];
+	//char est_crm[25];
 	
 	
-	char estoque_pesquisa_codigo[4];
+	char estoque_pesquisa_codigo[10];
+	printf("insira um código para a busca: ");
+	scanf("%s", estoque_pesquisa_codigo);
 	
+			
 	FILE *Pont_arq_main;
     Pont_arq_main = fopen("arquivo", "ab+"); 
     
     
-    
-    
-//deve ser melhorado --------------    
-    fread(&Estoque_Ler, sizeof(EstruturaRemedio_estoque), 1, Pont_arq_main);
-	while(!(feof(Pont_arq_main)) )
-	{
-		
+	while(!(feof(Pont_arq_main)))
+	{	
 		fread(&Estoque_Ler, sizeof(EstruturaRemedio_estoque), 1, Pont_arq_main);
-		if (!(feof(Pont_arq_main)))
-		{
-//deve ser melhorado --------------  
+		strcpy(est_cod, Estoque_Ler.estoquecodigo);
+		printf("%s --- \n", est_cod);
+		if ((strcmp (estoque_pesquisa_codigo, Estoque_Ler.estoquecodigo) == 0) && (!(feof(Pont_arq_main)))
+			){
 			strcpy(est_cod, Estoque_Ler.estoquecodigo);
 			strcpy(est_nom, Estoque_Ler.estoquenome);
 			est_prec        = Estoque_Ler.estoquePreco;
 			est_tiporemedio = Estoque_Ler.estoqueTipoRemedio;
-			strcpy(est_crm, Estoque_Ler.estoqueCRM);
-			
-			
-			
-			
-			
-			
-			
 			
 				
 			if (estoque_operacao == 1)
-			{
-				//printf("1 - Verificar Estoque Atual\n");
+			{	
+				printf("|-----------------------------------------|\n");
+				printf("|1 - Verificar Estoque Atual de um produto|\n");
+				printf("|-----------------------------------------|\n");
+				system("pause");
 			}
 			
 			if (estoque_operacao == 2)
 			{
-				Comprar(est_cod, est_nom , est_prec, est_tiporemedio,est_crm);
+				printf("|-----------------------------------------|\n");
+				printf("|----------------entrou 2-----------------|\n");
+				printf("|-----------------------------------------|\n");
+				system("pause");
+				Comprar(est_cod, est_nom , est_prec , est_tiporemedio);
 			}
 			if (estoque_operacao == 3)
 			{
-				Vender(est_cod, est_nom , est_prec, est_tiporemedio,est_crm);
+				Vender(est_cod, est_nom , est_prec , est_tiporemedio);
 
 			}
 		}
 	}
+	system("pause");
 	fclose(Pont_arq_main);
 	
 
@@ -158,9 +157,21 @@ int Estoque (void)
 
         //Lendo a operação
         scanf("%d",&Selecao);
-
-        //Executando a operação
-		buscaitem(Selecao);
+        
+        switch(Selecao)
+        {
+            case 1 :
+				buscaitem(Selecao);
+            break;				
+            case 2 :
+				buscaitem(Selecao);
+            break;
+            
+			case 3 :
+				buscaitem(Selecao);
+            break;
+        }
+		
 	}while(Selecao!=0);
 	system ("cls");	
 	return 0;

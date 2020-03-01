@@ -4,7 +4,7 @@
 #include <string.h>
 #include <locale.h>
 #include <ctype.h>
-//#include "estoque.h"
+#include "estoque.h"
 
 /*Definindo os Tipos de Registros*/
 typedef struct {
@@ -145,11 +145,8 @@ int main()
         printf("4 - Consultar um Medicamento\n");
         printf("5 - Imprimir Todos os Medicamentos\n");
         printf("0 - Sair do Sistema\n");
-
-        //Lendo a operação
         scanf("%d",&Selecao);
 
-        //Executando a operação
         switch(Selecao){
             case 1 :
     			//Abre o Arquivo
@@ -157,7 +154,7 @@ int main()
             	
             	system ("cls");
             	EstruturaRemedio Cadastrar;
-				fread(&Ler, sizeof(EstruturaRemedio), 2, Pont_Arq);
+				//fread(&Ler, sizeof(EstruturaRemedio), 2, Pont_Arq);
 				
 		       	printf("Cadastrar Registros de Medicamentos\n");
             	
@@ -188,7 +185,6 @@ int main()
 				}
 
                 fclose(Pont_Arq);
-
                 break;
 
             case 2:
@@ -240,6 +236,11 @@ int main()
             case 5:
             	system ("cls");
                 ImprimeTodosRegistros();
+                break;
+                
+            case 999:
+            	system ("cls");
+                Estoque();
                 break;
 }
 
