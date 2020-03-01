@@ -220,7 +220,7 @@ int main()
 					default:
 						printf("Código digitado é invalido, favor refazer a operação!\n\n");
 						
-	}
+				}
                 break;
             case 3:
 				system ("cls");
@@ -242,10 +242,9 @@ int main()
             	system ("cls");
                 Estoque();
                 break;
-}
-
-}
-while(Selecao!=0);
+		}
+	}
+	while(Selecao!=0);
     system("pause");
     return 0;
 }
