@@ -16,6 +16,7 @@ typedef struct {
     char nome[100];
     float Preco;
     char TipoRemedio;
+    //usamos o crm no estoque
 }EstruturaRemedio;
 
 
@@ -25,7 +26,12 @@ EstruturaRemedio Excluir;
 
 
 /*Apenas exibe todos registros*/	
-void ImprimeTodosRegistros(){
+void ImprimeTodosRegistros()
+{
+	printf("|------------------------------------------------|\n");
+	printf("|5 - Modulo para visualizacao de item cadastrados|\n");
+	printf("|------------------------------------------------|\n");
+	
     FILE *Arquivo = fopen("arquivo", "ab+");
     int cont = 1;
     while(!(feof(Arquivo)))
@@ -37,7 +43,10 @@ void ImprimeTodosRegistros(){
         	printf("CÓDIGO: %s\n",Ler.codigo);
         	printf("NOME: %s\n",Ler.nome);
         	printf("PREÇO: R$ %.2f\n",Ler.Preco);
-        	Ler.TipoRemedio=='S'?printf("Obrigatorio Reter a Receita: Sim\nCRM do Médico: \n\n"):printf("Obrigatorio Reter a Receita: Não\n\n");
+        	Ler.TipoRemedio=='S' || Ler.TipoRemedio=='s'
+        	?printf("Obrigatorio Reter a Receita: Sim\n>>>Ao comprar ou vender será solicitado o CRM do médico! \n\n"):
+        	printf("Obrigatorio Reter a Receita: Não\n\n");
+			
 			cont++;
 		}
 		else if (cont == 1)
@@ -46,6 +55,9 @@ void ImprimeTodosRegistros(){
 		}
     }
     fclose(Arquivo);
+    printf("|------------------------------------------------|\n");
+    system("pause");
+    system ("cls");
 }
 
 
@@ -221,6 +233,7 @@ int main()
 				printf("1 - Excluir todos os Registros.\n");
 				printf("2 - Excluir Registros por Codigo.\n");
 				printf("3 - Excluir Registros por Nome.\n");
+				printf("0 - Voltar ao Menu Inicial.\n");
 				scanf("%d",&Op);
 				switch(Op){
 					char pesquisa[100];
@@ -244,7 +257,8 @@ int main()
 						scanf("%s",pesquisa);
 						ExcluiRegistro(2,pesquisa);
 					default:
-						printf("Codigo digitado é invalido, favor refazer a operao!\n\n");
+						printf(">> menu inicial!\n\n");
+						system ("cls");
 						
 				}
                 break;
