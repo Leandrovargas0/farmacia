@@ -42,12 +42,12 @@ EstruturaRemedio_estoque Estoque_Ler;
 
 
 
-int func_controle_estoque(int func_controle_estoque_tipo, char func_controle_estoque_codigo[],
+void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_estoque_codigo[],
 							char func_controle_estoque_nome[], float func_controle_estoquePreco,
 							char func_controle_estoque_TipoRemedio, int func_controle_estoque_Quantidade)
 	{
-/*
- 		FILE *est_his_compra = fopen("controle_estoque", "ab+"); 
+
+ 		FILE *est_hist = fopen("controle_estoque", "ab+"); 
 		int achou_em_estoque = 0;
 		// exibicao geral 1
 		// exibicao unica	2 
@@ -64,26 +64,80 @@ int func_controle_estoque(int func_controle_estoque_tipo, char func_controle_est
 			break;
 
 			case 3:
-				while(!(feof(est_his_compra)))
+				while((!(feof(est_hist)) && (achou_em_estoque == 0)) )
 				{  
-					fread(&Estoque_hist_operacao, sizeof(Historico_estoque_local), 1, est_his_compra);
-					if((!(feof(est_his_compra))) && (strcmp (func_controle_estoque_codigo, Estoque_hist_operacao.codigo) == 0))
+					fread(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist);
+					if((!(feof(est_hist))) && (strcmp (func_controle_estoque_codigo, Opera_estoque.codigo) == 0))
 					{
-						achou_em_estoque++
-					
-					
+						achou_em_estoque++;
+						printf("ja existia no estoque");
+						fclose(est_hist);
+						FILE *est_hist = fopen("controle_estoque", "ab+");
+						FILE *est_hist_aux = fopen("controle_estoque_aux", "ab+");
+						while(!(feof(est_hist)))
+						{
+							fread(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist);
+							if((!(feof(est_hist))) && (strcmp (func_controle_estoque_codigo, Opera_estoque.codigo) == 0))
+							{
+								Opera_estoque.Quantidade = Opera_estoque.Quantidade + func_controle_estoque_Quantidade;
+								fwrite(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist_aux);
+							}
+							else
+							{
+								if(!(feof(est_hist)))
+								{
+									fwrite(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist_aux);
+								}
+							}
+						}
+						fclose(est_hist);
+						fclose(est_hist_aux);
+						
+						remove("controle_estoque");
+						est_hist = fopen("controle_estoque", "ab+");
+						est_hist_aux = fopen("controle_estoque_aux", "ab+");
+						
+						while(!(feof(est_hist_aux)))
+						{
+							fread(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist_aux);
+							if(!(feof(est_hist_aux)))
+							{
+								fwrite(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist);
+							}
+						}
+						fclose(est_hist);
+						fclose(est_hist_aux);
+						
+						remove("controle_estoque_aux");		
+					}						
 				}
+				if (achou_em_estoque == 0)
+				{		
+					achou_em_estoque++;
+					printf("///////////////////");			
+					strcpy(Opera_estoque.codigo, func_controle_estoque_codigo);
+					strcpy(Opera_estoque.nome, func_controle_estoque_nome);
+					Opera_estoque.TipoRemedio = func_controle_estoque_TipoRemedio;
+					
+					Opera_estoque.Preco = func_controle_estoquePreco;
+					Opera_estoque.Quantidade = func_controle_estoque_Quantidade;
+
+					fwrite(&Opera_estoque, sizeof(Controle_Estoque), 1, est_hist);	
+					fclose(est_hist);
+				
+				}	
+				
+				
 			break;
 
-			case 4: 	
-			
-			break;
+			//case 4: 	
+				//a venda foi implementada no módulo de venda 
+			//break;
 
 		}
 		
-		//fread(&Opera_estoque, sizeof(Historico_estoque_local), 1, est_his_compra);	
-*/
-		return 0;
+		system("pause");
+
 	}
 
 
@@ -114,7 +168,7 @@ void Historico_compra(int Historico_compra_tipo)
 				printf("CRM: %s\n",Estoque_hist_operacao.crm);
 				printf("Quantidade: %d\n",Estoque_hist_operacao.Quantidade );
 				
-				printf("DATA: %d/%d/%d \n", Estoque_hist_operacao.dia, Estoque_hist_operacao.mes, Estoque_hist_operacao.ano);
+				printf("DATA: %d/%d/%d \n", Estoque_hist_operacao.dia, Estoque_hist_operacao.mes, Estoque_hist_operacao.ano + 1900);
 				printf("HORARIO: %d HORAS, %d MINUTOS E %d SEGUNDOS\n", Estoque_hist_operacao.hora,
 				Estoque_hist_operacao.minuto, Estoque_hist_operacao.segundo);
 				
@@ -144,7 +198,7 @@ void Historico_compra(int Historico_compra_tipo)
 				printf("CRM: %s\n",Estoque_hist_operacao.crm);
 				printf("Quantidade: %d\n",Estoque_hist_operacao.Quantidade );
 				
-				printf("DATA: %d/%d/%d \n", Estoque_hist_operacao.dia, Estoque_hist_operacao.mes, Estoque_hist_operacao.ano);
+				printf("DATA: %d/%d/%d \n", Estoque_hist_operacao.dia, Estoque_hist_operacao.mes, Estoque_hist_operacao.ano + 1900);
 				printf("HORARIO: %d HORAS, %d MINUTOS E %d SEGUNDOS\n", Estoque_hist_operacao.hora,
 				Estoque_hist_operacao.minuto, Estoque_hist_operacao.segundo);
 				
@@ -163,16 +217,106 @@ void Historico_compra(int Historico_compra_tipo)
 //void Historico_venda(){}
 
 
-int Vender(char estoque_cod[], char estoque_nom[], float estoque_prec,
-			char estoque_tiporemedio )
+void Vender_prod()
 {
-	return 0;
+	char func_controle_estoque_codigo[10];
+	int achou_em_estoque = 0;
+	int venda_quantidade = 0;
+	time(&segundos);    
+	data_hora_atual = localtime(&segundos);
+	
+	printf("insira um codigo para a busca >>> ");
+	scanf("%s", func_controle_estoque_codigo);
+	printf("\n");
+	
+	printf("quantos itens serao vendidos? >>> ");
+	scanf("%d", &venda_quantidade);
+	printf("\n\n");
+	
+	
+	FILE *vender = fopen("controle_estoque", "ab+");
+	//FILE *vender_aux = fopen("controle_estoque_aux", "ab+");
+	//Opera_estoque
+	
+	while((!(feof(vender)) && (achou_em_estoque == 0)))
+		{  
+			fread(&Opera_estoque , sizeof(Controle_Estoque), 1, vender);
+			if((!(feof(vender))) && (strcmp (func_controle_estoque_codigo, Opera_estoque.codigo) == 0))
+			{
+				achou_em_estoque++;
+				printf("\n ----- localizou ----- \n\n");
+				
+				
+				
+				if (Opera_estoque.Quantidade < venda_quantidade)
+				{
+					printf("\n ----- quantidade em estoque e inferior ao da venda ----- \n ----- favor reiniciar a venda -----\n\n");
+					
+				}
+				else
+				{
+						fclose(vender);
+						FILE *est_hist = fopen("controle_estoque", "ab+");
+						FILE *est_hist_aux = fopen("controle_estoque_aux", "ab+");
+						while(!(feof(est_hist)))
+						{
+							fread(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist);
+							if((!(feof(est_hist))) && (strcmp (func_controle_estoque_codigo, Opera_estoque.codigo) == 0))
+							{
+								Opera_estoque.Quantidade = Opera_estoque.Quantidade - venda_quantidade;
+								fwrite(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist_aux);
+							}
+							else
+							{
+								if(!(feof(est_hist)))
+								{
+									fwrite(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist_aux);
+								}
+							}
+						}
+						fclose(est_hist);
+						fclose(est_hist_aux);
+						
+						remove("controle_estoque");
+						est_hist = fopen("controle_estoque", "ab+");
+						est_hist_aux = fopen("controle_estoque_aux", "ab+");
+						
+						while(!(feof(est_hist_aux)))
+						{
+							fread(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist_aux);
+							if(!(feof(est_hist_aux)))
+							{
+								fwrite(&Opera_estoque , sizeof(Controle_Estoque), 1, est_hist);
+							}
+						}
+						fclose(est_hist);
+						fclose(est_hist_aux);
+						
+						remove("controle_estoque_aux");		
+				}
+				
+				
+				system("pause");
+				
+	
+			}						
+		}
+		if (achou_em_estoque == 0)
+		{		
+			achou_em_estoque++;
+			printf("\n\n ----- produto ainda nao adicionado ao estoque -----");
+			system("pause");					
+		}	
+	
+	fclose(vender);
+	
 }
 
 
-int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
+void Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 			char estoque_tiporemedio)
 {
+	
 	time(&segundos);    
 	data_hora_atual = localtime(&segundos);
 	
@@ -203,14 +347,15 @@ int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 		scanf("%s", Estoque_hist_operacao.crm);
 		
 		fwrite(&Estoque_hist_operacao, sizeof(Historico_estoque_local), 1, est_his_compra);
-	
+	    printf("entrou 1");
 	}
 	else
 	{
 		//salva quem nao retem receita
 		fwrite(&Estoque_hist_operacao, sizeof(Historico_estoque_local), 1, est_his_compra);
+		printf("entrou 0");
 	}
-	fclose(est_his_compra);
+	//fclose(est_his_compra);
 	
 	
 	printf("CODIGO: %s\n",Estoque_hist_operacao.codigo);
@@ -220,13 +365,11 @@ int Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 	//printf("CÓDIGO: %s\n",Opera_estoque.CRM);
 	printf("Total de produtos: %d\n",Estoque_hist_operacao.Quantidade );
 
-	fclose(est_his_compra);	
-	
-	func_controle_estoque(3, Estoque_hist_operacao.codigo, Estoque_hist_operacao.nome,
-						  Estoque_hist_operacao.Preco, Estoque_hist_operacao.TipoRemedio , Estoque_hist_operacao.Quantidade);
 		
+	
+	func_controle_estoque(3, Estoque_hist_operacao.codigo, Estoque_hist_operacao.nome, Estoque_hist_operacao.Preco, Estoque_hist_operacao.TipoRemedio , Estoque_hist_operacao.Quantidade);
+	fclose(est_his_compra);	
 	system("pause");
-	return 0;
 }
 
 
@@ -256,23 +399,16 @@ void buscaitem(int estoque_operacao)
 			est_tiporemedio = Estoque_Ler.estoqueTipoRemedio;
 
 			
-			switch(estoque_operacao){
-				case 1 :			
-					printf("|-----------------------------------------|\n");
-					printf("|1 - Verificar Estoque Atual de um produto|\n");
-					printf("|-----------------------------------------|\n");
-					system("pause");
-					break;				
+			switch(estoque_operacao)
+			{
+									
 				case 2 :
-					Comprar(est_cod, est_nom , est_prec , est_tiporemedio);
-					break;
-				case 3 :
-					Vender(est_cod, est_nom , est_prec , est_tiporemedio);
-					break;
-			}//switch				
-		}//if
-	}//while
-	system("pause");
+						Comprar(est_cod, est_nom , est_prec , est_tiporemedio);
+
+					break;						
+			}				
+		}
+	}
 	fclose(Pont_arq_main);
 }
 
@@ -296,6 +432,7 @@ int Estoque (void)
         printf("|7 - historico individual de vendas       |\n");
         printf("|0 - Voltar ao Menu Inicial               |\n");
         printf("|-----------------------------------------|\n");
+        
         scanf("%d",&Selecao);
         
         switch(Selecao){
@@ -309,7 +446,7 @@ int Estoque (void)
             break;
             
 			case 3 :
-				buscaitem(Selecao);
+				Vender_prod();
             break;
             
             case 4 :
@@ -340,41 +477,4 @@ int tm_isdst; //indica horário de verão se for diferente de zero
 };
 */		
 
-
-
-
-
-
-
-
-
-
-/*	
-	FILE *Pont_estoque;
-    Pont_estoque = fopen("controle_estoque", "ab+"); 
-    
-    time(&segundos);    
-	data_hora_atual = localtime(&segundos);
-					 
-    strcpy(Opera_estoque.codigo, estoque_cod)       ;
-    strcpy(Opera_estoque.nome, estoque_nom)         ;
-    Opera_estoque.Preco        = estoque_prec       ;
-    Opera_estoque.TipoRemedio  = estoque_tiporemedio;
-    Opera_estoque.Quantidade   = 1                  ;
-	fwrite(&Opera_estoque, sizeof(Controle_Estoque), 1, Pont_estoque);
-	fclose(Pont_estoque);
-	
-    Pont_estoque = fopen("controle_estoque", "ab+"); 
-	fread(&Opera_estoque, sizeof(Controle_Estoque), 2, Pont_estoque);
-		
-	printf("CÓDIGO: %s\n",Opera_estoque.codigo);
-	printf("CÓDIGO: %s\n",Opera_estoque.nome);
-	printf("CÓDIGO: %f\n",Opera_estoque.Preco );
-	printf("CÓDIGO: %c\n",Opera_estoque.TipoRemedio);
-	//printf("CÓDIGO: %s\n",Opera_estoque.CRM);
-	printf("CÓDIGO: %d\n",Opera_estoque.Quantidade );
-
-	fclose(Pont_estoque);
-	* 
-*/
 
