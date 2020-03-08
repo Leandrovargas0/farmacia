@@ -56,11 +56,71 @@ void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_es
 		switch(func_controle_estoque_tipo)
 		{
 			case 1: 	
-			
+				system ("cls");
+				printf("|------------------------------------------------|\n");
+				printf("|--------- 1-Verificar Estoque Atual ----------- |\n");
+				printf("|------------------------------------------------|\n");
+				
+				achou_em_estoque = 1;
+				while(!(feof(est_hist)))
+				{   	
+					fread(&Opera_estoque, sizeof(Controle_Estoque), 1, est_hist);
+					if (!(feof(est_hist)))
+					{
+						printf("ITEM N %d: \n", achou_em_estoque);
+						printf("CODIGO: %s\n",Opera_estoque.codigo);
+						printf("NOME: %s\n",Opera_estoque.nome);
+						printf("PRECO: R$ %.2f\n",Opera_estoque.Preco);
+						Opera_estoque.TipoRemedio=='S' || Opera_estoque.TipoRemedio=='s'
+						?printf("Obrigatorio Reter a Receita: Sim\n>>>Ao comprar ou vender sera solicitado o CRM do medico! \n"):
+						printf("Obrigatorio Reter a Receita: Nao\n");
+						printf("Quantidade em estoque: %d\n",Opera_estoque.Quantidade);
+						printf("|------------------------------------------------|\n\n");
+						achou_em_estoque++;
+					}
+					else if (achou_em_estoque == 1)
+					{
+						printf("medicamento nao localizado no estoque!\n\n");
+					}
+				}
+				fclose(est_hist);
+				printf("|------------------------------------------------|\n");
+				system("pause");
+				system ("cls");
 			break;
 			
 			case 2: 	
-			
+				system ("cls");
+				printf("|------------------------------------------------|\n");
+				printf("|----8 - Verificar apenas um item em estoque ----|\n");
+				printf("|------------------------------------------------|\n");
+				
+				achou_em_estoque = 1;
+				while(!(feof(est_hist)))
+				{   	
+					fread(&Opera_estoque, sizeof(Controle_Estoque), 1, est_hist);
+					if( (!(feof(est_hist))) && (strcmp (func_controle_estoque_codigo, Opera_estoque.codigo)))
+					{
+						printf("ITEM N %d: \n", achou_em_estoque);
+						printf("CODIGO: %s\n",Opera_estoque.codigo);
+						printf("NOME: %s\n",Opera_estoque.nome);
+						printf("PRECO: R$ %.2f\n",Opera_estoque.Preco);
+						Opera_estoque.TipoRemedio=='S' || Opera_estoque.TipoRemedio=='s'
+						?printf("Obrigatorio Reter a Receita: Sim\n>>>Ao comprar ou vender sera solicitado o CRM do medico! \n"):
+						printf("Obrigatorio Reter a Receita: Nao\n");
+						printf("Quantidade em estoque: %d\n",Opera_estoque.Quantidade);
+						printf("|------------------------------------------------|\n\n");
+						achou_em_estoque++;
+					}
+					else if (achou_em_estoque == 1)
+					{
+						printf("medicamento nao localizado no estoque!\n\n");
+					}
+				}
+				fclose(est_hist);
+				printf("|------------------------------------------------|\n");
+				system("pause");
+				system ("cls");
 			break;
 
 			case 3:
@@ -70,7 +130,7 @@ void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_es
 					if((!(feof(est_hist))) && (strcmp (func_controle_estoque_codigo, Opera_estoque.codigo) == 0))
 					{
 						achou_em_estoque++;
-						printf("ja existia no estoque");
+						printf("\nCompra bem sucedida\n\n");
 						fclose(est_hist);
 						FILE *est_hist = fopen("controle_estoque", "ab+");
 						FILE *est_hist_aux = fopen("controle_estoque_aux", "ab+");
@@ -114,7 +174,7 @@ void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_es
 				if (achou_em_estoque == 0)
 				{		
 					achou_em_estoque++;
-					printf("///////////////////");			
+								
 					strcpy(Opera_estoque.codigo, func_controle_estoque_codigo);
 					strcpy(Opera_estoque.nome, func_controle_estoque_nome);
 					Opera_estoque.TipoRemedio = func_controle_estoque_TipoRemedio;
@@ -124,6 +184,7 @@ void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_es
 
 					fwrite(&Opera_estoque, sizeof(Controle_Estoque), 1, est_hist);	
 					fclose(est_hist);
+					printf("\nCompra bem sucedida\n\n");
 				
 				}	
 				
@@ -136,7 +197,7 @@ void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_es
 
 		}
 		
-		system("pause");
+		
 
 	}
 
@@ -415,6 +476,7 @@ void buscaitem(int estoque_operacao)
 
 int Estoque (void)
 {	
+	char localllllllll[10];
 
 	int Selecao;
     do
@@ -424,12 +486,13 @@ int Estoque (void)
         //Exibindo o menu
         printf("|-----------------ESTOQUE-----------------|\n");
         printf("|1 - Verificar Estoque Atual              |\n");
-        printf("|2 - Adicionar OU comprar medicamentos****|\n");
+        printf("|2 - Adicionar OU comprar medicamentos    |\n");
         printf("|3 - Vender OU remover medicamentos       |\n");
         printf("|4 - historico geral de compras           |\n");
         printf("|5 - historico individual de compras      |\n");
-        printf("|6 - historico geral de vendas            |\n");
-        printf("|7 - historico individual de vendas       |\n");
+        printf("|6 - historico geral de vendas      ******|\n");
+        printf("|7 - historico individual de vendas ******|\n");
+        printf("|8 - Verificar apenas um item em estoque  |\n");
         printf("|0 - Voltar ao Menu Inicial               |\n");
         printf("|-----------------------------------------|\n");
         
@@ -437,8 +500,9 @@ int Estoque (void)
         
         switch(Selecao){
             case 1 :
-				//char localllllllll[2];
-				//func_controle_estoque(1, localllllllll, localllllllll, 0, '0' , 0);
+				
+				strcpy(localllllllll, "aa");
+				func_controle_estoque(1, localllllllll, localllllllll, 0, '0' , 0);
 
             break;				
             case 2 :
@@ -456,6 +520,14 @@ int Estoque (void)
 			case 5 :
 				Historico_compra(5);
 			break;
+			
+			case 8 :
+				printf("insira um codigo para a busca >>> ");
+				scanf("%s", localllllllll);
+				printf("\n");
+				func_controle_estoque(2, localllllllll, localllllllll, 0, '0' , 0);
+			break;
+			
         }
 	}while(Selecao!=0);
 	system ("cls");	
