@@ -186,19 +186,13 @@ void func_controle_estoque(int func_controle_estoque_tipo, char func_controle_es
 					fclose(est_hist);
 					printf("\nCompra bem sucedida\n\n");
 				
-				}	
-				
-				
+				}									
 			break;
 
 			//case 4: 	
 				//a venda foi implementada no módulo de venda 
 			//break;
-
-		}
-		
-		
-
+		}			
 	}
 
 
@@ -276,7 +270,6 @@ void Historico_compra(int Historico_compra_tipo)
 
 
 //void Historico_venda(){}
-
 
 void Vender_prod()
 {
@@ -373,7 +366,6 @@ void Vender_prod()
 	
 }
 
-
 void Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 			char estoque_tiporemedio)
 {
@@ -425,7 +417,6 @@ void Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 	printf("RETEM RECEITA: %c\n",Estoque_hist_operacao.TipoRemedio);
 	//printf("CÓDIGO: %s\n",Opera_estoque.CRM);
 	printf("Total de produtos: %d\n",Estoque_hist_operacao.Quantidade );
-
 		
 	
 	func_controle_estoque(3, Estoque_hist_operacao.codigo, Estoque_hist_operacao.nome, Estoque_hist_operacao.Preco, Estoque_hist_operacao.TipoRemedio , Estoque_hist_operacao.Quantidade);
@@ -458,21 +449,17 @@ void buscaitem(int estoque_operacao)
 			strcpy(est_nom, Estoque_Ler.estoquenome);
 			est_prec        = Estoque_Ler.estoquePreco;
 			est_tiporemedio = Estoque_Ler.estoqueTipoRemedio;
-
-			
+					
 			switch(estoque_operacao)
-			{
-									
+			{									
 				case 2 :
 						Comprar(est_cod, est_nom , est_prec , est_tiporemedio);
-
 					break;						
 			}				
 		}
 	}
 	fclose(Pont_arq_main);
 }
-
 
 int Estoque (void)
 {	

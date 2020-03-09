@@ -25,6 +25,37 @@ EstruturaRemedio Ler;
 EstruturaRemedio Excluir;
 
 
+
+int verificacao_arquivo(char Pesquisa[])
+{
+	int consulta = 0;
+	FILE *Arquivo = fopen("arquivo", "ab+");
+
+	while(!(feof(Arquivo)))
+	{   	
+		fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
+		if((strcmp (Ler.codigo, Pesquisa) == 0) && (!(feof(Arquivo))))
+		{
+			consulta++;				
+		}
+	}
+	
+	fclose(Arquivo);
+	
+	if (consulta == 0)
+	{
+		return 0;
+	}
+	else {
+		printf("\n >>>>>O codigo digitado, %s, já exite favor inserir outro <<<<\n\n", Pesquisa);
+		 system("pause");
+		 system ("cls");
+		return 1;
+		}
+	
+}
+
+
 /*Apenas exibe todos registros*/	
 void ImprimeTodosRegistros()
 {
@@ -177,6 +208,8 @@ int main()
 	
 	int Selecao;
     do{
+		char code[10];
+		int retorno_func = 0;
         Selecao = 0;
         printf("Bem Vindos ao cadastro de Medicamentos:\n");
         printf("Digite o codigo referente a operacao que deseja executar.\n");
@@ -191,38 +224,36 @@ int main()
 
         switch(Selecao){
             case 1 :
-    			//Abre o Arquivo
-            	Pont_Arq = fopen("arquivo", "ab+");
-				
-				//LIMPA A TELA
-            	system ("cls");
-            	
-            	//REFERENCIA O REGISTRO, VEJA O INICIO
-            	EstruturaRemedio Cadastrar;
-            	
-				
-		       	printf("Cadastrar Registros de Medicamentos\n");
-            	
-            	//Solicita as Informacoes para Cadastrar
+				system ("cls");
+		       	printf("-----Cadastrar Registros de Medicamentos-----\n");
                 printf("Digite o codigo do Novo Medicamento:\n");
-                scanf("%s", Cadastrar.codigo);
- 	
-                printf("Digite o Nome do Novo Medicamento:\n");
-                scanf("%s", Cadastrar.nome);
-				
-                printf("Digite o Preco do Novo Medicamento:\n");
-                scanf("%f", &Cadastrar.Preco);
+                scanf("%s", code);
+                
+                retorno_func = verificacao_arquivo(code);
+                if (retorno_func == 0)
+                {
+					Pont_Arq = fopen("arquivo", "ab+");
+					EstruturaRemedio Cadastrar;
+					
+					strcpy(Cadastrar.codigo, code);
+					//scanf("%s", Cadastrar.codigo);
+		
+					printf("Digite o Nome do Novo Medicamento:\n");
+					scanf("%s", Cadastrar.nome);
+					
+					printf("Digite o Preco do Novo Medicamento:\n");
+					scanf("%f", &Cadastrar.Preco);
 
-                printf("Necessita a Retencao da Receita?\nS - Sim \nN - Nao\n");
-                scanf("%s", &Cadastrar.TipoRemedio);
-                Cadastrar.TipoRemedio = toupper(Cadastrar.TipoRemedio); 
-               
-                if(Cadastrar.TipoRemedio != 0){
-					//guarda na última posicao do arquivo
-                	fwrite(&Cadastrar, sizeof(EstruturaRemedio), 1, Pont_Arq);
+					printf("Necessita a Retencao da Receita?\nS - Sim \nN - Nao\n");
+					scanf("%s", &Cadastrar.TipoRemedio);
+					Cadastrar.TipoRemedio = toupper(Cadastrar.TipoRemedio); 
+				   
+					if(Cadastrar.TipoRemedio != 0){	
+						fwrite(&Cadastrar, sizeof(EstruturaRemedio), 1, Pont_Arq);
+					}
+					fclose(Pont_Arq);
+					system("pause");system ("cls");
 				}
-
-                fclose(Pont_Arq);
             break;
 
             case 2:
@@ -305,7 +336,7 @@ int main()
                 
             case 4:       
                 printf("OPCAO 4\n");
-               // Pesquisa_medicamento();
+				//Pesquisa_medicamento();
                 system("pause");
                 system ("cls");
                 break;
