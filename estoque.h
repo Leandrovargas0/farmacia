@@ -429,6 +429,8 @@ void Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 
 void buscaitem(int estoque_operacao)
 {
+	setlocale(LC_ALL, NULL);
+	system("chcp 1252 > nul");
 	char est_cod[10];
 	char est_nom[100];
 	float est_prec;

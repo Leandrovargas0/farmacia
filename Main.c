@@ -24,6 +24,162 @@ typedef struct {
 EstruturaRemedio Ler;
 EstruturaRemedio Excluir;
 
+void EditarRegistro(int Tipo, char Pesquisa[])
+{	
+	int continuar = 0;
+	int item_encontrado = 0;
+	FILE *Arquivo = fopen("arquivo", "ab+");
+	FILE *Arquivo_aux = fopen("arquivo_aux", "ab+");
+	switch(Tipo)
+	{
+		case 1:
+    		while(!(feof(Arquivo)))
+    		{   	
+				fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
+				if((strcmp (Ler.codigo, Pesquisa) == 0) && (!(feof(Arquivo))))
+				{
+					item_encontrado++;
+					printf("\n|------------------------------------------------|\n");
+					printf("Atencao! Este registro pode ser editado:\n");
+					printf("motivo: possui o Codigo buscado\n");
+					printf("CODIGO: %s\n",Ler.codigo);
+					printf("NOME: %s\n",Ler.nome);
+					printf("PRECO: R$ %.2f\n",Ler.Preco);
+					Ler.TipoRemedio=='S'?printf("Obrigatorio Reter a Receita: Sim\n\n"):printf("Obrigatorio Reter a Receita: Nao\n\n");					
+					
+					printf(">>>Digite 1 para continuar com a edicao\n");
+					scanf("%d", &continuar);
+					if(continuar == 1)
+					{
+						printf("\n|para sua seguranca nao permitimos que modifique o codigo|\n");
+						printf(">>>Novo nome:");scanf("%s", Ler.nome);printf("\n");
+						
+						printf(">>>Novo Preco:");scanf("%f", &Ler.Preco);printf("\n");
+
+						printf("Necessita a Retencao da Receita?\nS - Sim \nN - Nao\n");
+						scanf("%s", &Ler.TipoRemedio);
+						printf("\n");
+						fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);
+						
+					}
+					else {
+						item_encontrado= -1;
+					}
+				
+				}
+				else
+				{
+					if(!(feof(Arquivo)))
+					{
+						fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);
+					}
+				}
+			}		
+			break;
+	
+		case 2:
+			while(!(feof(Arquivo)))
+    		{   	
+				fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
+				if((strcmp (Ler.nome, Pesquisa) == 0) && (!(feof(Arquivo))))
+				{
+					item_encontrado++;
+					printf("\n|------------------------------------------------|\n");
+					printf("Atencao! Este registro pode ser editado:\n");
+					printf("motivo: possui o Nome buscado\n");
+					printf("CoDIGO: %s\n",Ler.codigo);
+					printf("NOME: %s\n",Ler.nome);
+					printf("PRECO: R$ %.2f\n",Ler.Preco);
+					Ler.TipoRemedio=='S'?printf("Obrigatorio Reter a Receita: Sim\n\n"):printf("Obrigatorio Reter a Receita: Nao\n\n");					
+					
+					printf(">>>Digite 1 para continuar com a edicao\n");
+					scanf("%d", &continuar);
+					if(continuar == 1)
+					{
+						printf("\n|para sua seguranca nao permitimos que modifique o codigo|\n");
+						printf(">>>Novo nome:");scanf("%s", Ler.nome);printf("\n");
+						
+						printf(">>>Novo Preco:");scanf("%f", &Ler.Preco);printf("\n");
+
+						printf("Necessita a Retencao da Receita?\nS - Sim \nN - Nao\n");
+						scanf("%s", &Ler.TipoRemedio);
+						printf("\n");
+						fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);
+						
+					}
+					else {
+						item_encontrado= -1;
+					}
+				
+				}
+				else
+				{
+					if(!(feof(Arquivo)))
+					{
+						fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);		
+					}	
+				}
+			}
+		break;
+	}
+	
+	fclose(Arquivo);
+	fclose(Arquivo_aux);
+	
+	if (item_encontrado > 0)
+	{
+		char confirma;
+		printf("Confirma Edicao do registro demonstrado?\n");
+		printf("S - Sim\n");
+		printf("N - Não\n");
+		scanf("%s",&confirma);
+		
+		if((confirma == 's')||(confirma == 'S'))
+		{
+			remove("arquivo");
+			Arquivo = fopen("arquivo", "ab+");
+			Arquivo_aux = fopen("arquivo_aux", "ab+");
+			while(!(feof(Arquivo_aux)))
+			{   	
+				fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);
+				if (!(feof(Arquivo_aux)))
+				{
+					fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);		
+				}	
+			}
+			fclose(Arquivo);
+			fclose(Arquivo_aux);
+			
+			remove("arquivo_aux");
+					
+			printf("\n|>>>---------Registro editado com Sucesso---------<<<|\n");
+			system("pause");
+			system ("cls");
+		}
+		else
+		{
+			remove("arquivo_aux");
+			printf("\n|>>>---------Operacao cancelada---------<<<|\n");
+			system("pause");
+			system ("cls");
+		}
+	}
+	if (item_encontrado == 0)
+	{
+		remove("arquivo_aux");
+		printf("\n|>>>---------Item nao cadastrado---------<<<|\n");
+		system("pause");
+		system ("cls");
+	}
+	if (item_encontrado < 0)
+	{		
+		remove("arquivo_aux");
+		printf("\n|>>>---------Edicao anulada---------<<<|\n");
+		system("pause");
+		system ("cls");
+	}
+	
+}
 
 
 int verificacao_arquivo(char Pesquisa[])
@@ -38,21 +194,19 @@ int verificacao_arquivo(char Pesquisa[])
 		{
 			consulta++;				
 		}
-	}
-	
-	fclose(Arquivo);
-	
+	}	
+	fclose(Arquivo);	
 	if (consulta == 0)
 	{
 		return 0;
 	}
-	else {
+	else 
+	{
 		printf("\n >>>>>O codigo digitado, %s, já exite favor inserir outro <<<<\n\n", Pesquisa);
 		 system("pause");
 		 system ("cls");
 		return 1;
-		}
-	
+	}
 }
 
 
@@ -105,7 +259,8 @@ void ExcluirTodos()
 /*EXclui por nome ou por código*/
 //FALTA ADICIONAR A SITUAÇÃO DO VALOR NAO ENCONTRADO, PARA NOME E CODIGO
 void ExcluiRegistro(int Tipo, char Pesquisa[])
-{
+{	
+	int item_encontrado = 0;
 	FILE *Arquivo = fopen("arquivo", "ab+");
 	FILE *Arquivo_aux = fopen("arquivo_aux", "ab+");
 	switch(Tipo)
@@ -116,6 +271,8 @@ void ExcluiRegistro(int Tipo, char Pesquisa[])
 				fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
 				if((strcmp (Ler.codigo, Pesquisa) == 0) && (!(feof(Arquivo))))
 				{
+					item_encontrado++;
+					printf("\n|------------------------------------------------|\n");
 					printf("Atencao! Este registro sera excluido:\n");
 					printf("CODIGO: %s\n",Ler.codigo);
 					printf("NOME: %s\n",Ler.nome);
@@ -138,6 +295,7 @@ void ExcluiRegistro(int Tipo, char Pesquisa[])
 				fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
 				if((strcmp (Ler.nome, Pesquisa) == 0) && (!(feof(Arquivo))))
 				{
+					item_encontrado++;
 					printf("Atencao! Este registro sera excluido:\n");
 					printf("CoDIGO: %s\n",Ler.codigo);
 					printf("NOME: %s\n",Ler.nome);
@@ -158,36 +316,49 @@ void ExcluiRegistro(int Tipo, char Pesquisa[])
 	fclose(Arquivo);
 	fclose(Arquivo_aux);
 	
-	char confirma;
-	printf("Confirma exclusão dos registros demonstrados?\n");
-	printf("S - Sim\n");
-	printf("N - Não\n");
-	scanf("%s",&confirma);
-	
-	if((confirma == 's')||(confirma == 'S'))
+	if (item_encontrado > 0)
 	{
-		remove("arquivo");
-		Arquivo = fopen("arquivo", "ab+");
-		Arquivo_aux = fopen("arquivo_aux", "ab+");
-		while(!(feof(Arquivo_aux)))
-    	{   	
-			fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);
-			if (!(feof(Arquivo_aux)))
-			{
-				fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);		
-			}	
-		}
-		fclose(Arquivo);
-		fclose(Arquivo_aux);
+		char confirma;
+		printf("Confirma exclusão do registro demonstrado?\n");
+		printf("S - Sim\n");
+		printf("N - Não\n");
+		scanf("%s",&confirma);
 		
-		remove("arquivo_aux");
-				
-		printf("Registros Excluidos com Sucesso!\n");
+		if((confirma == 's')||(confirma == 'S'))
+		{
+			remove("arquivo");
+			Arquivo = fopen("arquivo", "ab+");
+			Arquivo_aux = fopen("arquivo_aux", "ab+");
+			while(!(feof(Arquivo_aux)))
+			{   	
+				fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo_aux);
+				if (!(feof(Arquivo_aux)))
+				{
+					fwrite(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);		
+				}	
+			}
+			fclose(Arquivo);
+			fclose(Arquivo_aux);
+			
+			remove("arquivo_aux");
+					
+			printf("\n|>>>---------Registros Excluidos com Sucesso---------<<<|\n");
+			system("pause");
+			system ("cls");
+		}
+		else
+		{
+			remove("arquivo_aux");
+			printf("\n|>>>---------Operacao cancelada---------<<<|\n");
+			system("pause");
+			system ("cls");
+		}
 	}
-	else
+	if (item_encontrado == 0)
 	{
-		remove("arquivo_aux");
-		printf("OPERACAO CANCELADA!");
+			printf("\n|>>>---------Item nao cadastrado---------<<<|\n");
+			system("pause");
+			system ("cls");
 	}
 }
 
@@ -252,15 +423,18 @@ int main()
 						fwrite(&Cadastrar, sizeof(EstruturaRemedio), 1, Pont_Arq);
 					}
 					fclose(Pont_Arq);
-					system("pause");system ("cls");
+					system("pause");
+					system ("cls");
 				}
             break;
 
             case 2:
             	system ("cls");
+				printf("|------------------------------------------------|\n");
+				printf("|2 - Modulo para exclusao de itens cadastrados   |\n");
+				printf("|------------------------------------------------|\n");
 				int Op=0;
 				char confirma ='N';
-				printf("Excluir Registros de Medicamentos\n");
 				printf("1 - Excluir todos os Registros.\n");
 				printf("2 - Excluir Registros por Codigo.\n");
 				printf("3 - Excluir Registros por Nome.\n");
@@ -278,7 +452,7 @@ int main()
 						confirma=='S'?ExcluirTodos():printf("Operacao Cancelada!\n\n");				
 						break;
 					case 2 :	
-						printf("Digite o codigo que deseja excluir:");
+						printf("Digite o codigo que deseja excluir: ");
 						scanf("%s",pesquisa);
 						ExcluiRegistro(1,pesquisa);
 						
@@ -294,46 +468,34 @@ int main()
 				}
                 break;
             case 3:
-            	
-            	printf("Digite o Codigo ou Nome do medicamento que deseja editar:\n");
-            	char Pesquisa[100];
-            	scanf("%s", Pesquisa);
-        	    Pont_Arq = fopen("arquivo", "ab+");
-        	    //fseek(Pont_Arq, 0, SEEK_SET);
-    			while(!(feof(Pont_Arq)))
-    			{  	
-					fread(&Ler, sizeof(EstruturaRemedio), 1, Pont_Arq);
-					if((strcmp (Ler.codigo, Pesquisa) == 0))
-					{
-						printf("Atencao! Voce esta prestes a editar o Seguinte Registro:\n");
-						printf("CoDIGO: %s\n",Ler.codigo);
-						printf("NOME: %s\n",Ler.nome);
-						printf("PRECO: R$ %.2f\n",Ler.Preco);
-						Ler.TipoRemedio=='S'?printf("Obrigatorio Reter a Receita: Sim\n\n"):printf("Obrigatorio Reter a Receita: Nao\n\n");
-						EstruturaRemedio Cadastrar;
+            	system ("cls");
+				printf("|------------------------------------------------|\n");
+				printf("|3 - Modulo para edicao de item cadastrado       |\n");
+				printf("|------------------------------------------------|\n");
+				int Op1=0;
 				
-						//Solicita as Informações para Cadastrar
-                		printf("Digite o Novo Codigo do Medicamento:\n");
-                		scanf("%s", Cadastrar.codigo);
-						//Cadastrar.codigo = toupper(Cadastrar.codigo); 
-				
-                		printf("Digite o Novo Nome do Medicamento:\n");
-                		scanf("%s", Cadastrar.nome);
-						//Cadastrar.nome = toupper(Cadastrar.nome); 
-				
-                		printf("Digite o Preço do Novo Medicamento:\n");
-                		scanf("%f", &Cadastrar.Preco);
-
-                		printf("Necessita a RetenÃ§Ã£o da Receita?\nS - Sim \nN - Nao\n");
-                		scanf("%s", &Cadastrar.TipoRemedio);
-                		Cadastrar.TipoRemedio = toupper(Cadastrar.TipoRemedio); 
-	                	fwrite(&Cadastrar, sizeof(EstruturaRemedio), 1, Pont_Arq);	
-	                	fseek(Pont_Arq, 0, SEEK_SET);
-					}
+				printf("1 - Buscar Registros por Codigo.\n");
+				printf("2 - Buscar Registros por Nome.\n");
+				printf("0 - Voltar ao Menu Inicial.\n");
+				scanf("%d",&Op1);
+				switch(Op1){
+					char pesquisa[100];
+					case 1 :	
+						printf("Digite o codigo que deseja editar: ");
+						scanf("%s",pesquisa);
+						EditarRegistro(1,pesquisa);
+						
+						break;			
+					case 2:
+						printf("Digite o nome que deseja editar:");
+						scanf("%s",pesquisa);
+						EditarRegistro(2,pesquisa);
+					default:
+						printf(">> menu inicial!\n\n");
+						system ("cls");						
 				}
-				fclose(Pont_Arq);
-                break;
-                
+                break;    	    
+                               
             case 4:       
                 printf("OPCAO 4\n");
 				//Pesquisa_medicamento();
