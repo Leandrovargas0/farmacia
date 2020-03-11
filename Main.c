@@ -22,7 +22,48 @@ typedef struct {
 
 /*É usado dentro */
 EstruturaRemedio Ler;
-EstruturaRemedio Excluir;
+
+
+void Pesquisa_medicamento()
+{
+
+	printf("|------------------------------------------------|\n");
+	printf("|4 - Consultar um Medicamento                    |\n");
+	printf("|------------------------------------------------|\n");
+	
+	char code[10];
+	printf("\n>>>Digite o codigo para Uuscar informacoes\n");
+	scanf("%s", code);
+	
+
+	
+    FILE *Arquivo = fopen("arquivo", "ab+");
+    int cont = 1;
+    while(!(feof(Arquivo)))
+    {   	
+    	fread(&Ler, sizeof(EstruturaRemedio), 1, Arquivo);
+    	if((strcmp (Ler.codigo, code) == 0) && (!(feof(Arquivo))))
+    	{
+        	printf("CÓDIGO: %s\n",Ler.codigo);
+        	printf("NOME: %s\n",Ler.nome);
+        	printf("PREÇO: R$ %.2f\n",Ler.Preco);
+        	Ler.TipoRemedio=='S' || Ler.TipoRemedio=='s'
+        	?printf("Obrigatorio Reter a Receita: Sim\n>>>Ao comprar ou vender será solicitado o CRM do médico! \n\n"):
+        	printf("Obrigatorio Reter a Receita: Não\n\n");			
+			cont++;
+			printf("\n|===============================================|\n");						
+		}
+		else if (cont == 1)
+		{
+			printf("Arquivo sem nenhum registro para o codigo!\n\n");
+		}
+    }
+    fclose(Arquivo);
+    printf("\n|============================================|\n");	
+	
+}
+
+
 
 void EditarRegistro(int Tipo, char Pesquisa[])
 {	
@@ -498,7 +539,8 @@ int main()
                                
             case 4:       
                 printf("OPCAO 4\n");
-				//Pesquisa_medicamento();
+				Pesquisa_medicamento();
+				//char buscainterna_
                 system("pause");
                 system ("cls");
                 break;
