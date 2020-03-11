@@ -400,13 +400,13 @@ void Comprar(char estoque_cod[], char estoque_nom[], float estoque_prec,
 		scanf("%s", Estoque_hist_operacao.crm);
 		
 		fwrite(&Estoque_hist_operacao, sizeof(Historico_estoque_local), 1, est_his_compra);
-	    printf("entrou 1");
+	    //printf("entrou 1");
 	}
 	else
 	{
 		//salva quem nao retem receita
 		fwrite(&Estoque_hist_operacao, sizeof(Historico_estoque_local), 1, est_his_compra);
-		printf("entrou 0");
+		//printf("entrou 0");
 	}
 	//fclose(est_his_compra);
 	

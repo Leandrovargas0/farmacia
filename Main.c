@@ -53,7 +53,7 @@ void Pesquisa_medicamento()
 			cont++;
 			printf("\n|===============================================|\n");						
 		}
-		else if (cont == 1)
+		else if ((cont == 1) && (feof(Arquivo)))
 		{
 			printf("Arquivo sem nenhum registro para o codigo!\n\n");
 		}
