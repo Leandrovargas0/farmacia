@@ -26,13 +26,13 @@ EstruturaRemedio Ler;
 
 void Pesquisa_medicamento()
 {
-
+	system ("cls");
 	printf("|------------------------------------------------|\n");
 	printf("|4 - Consultar um Medicamento                    |\n");
 	printf("|------------------------------------------------|\n");
 	
 	char code[10];
-	printf("\n>>>Digite o codigo para Uuscar informacoes\n");
+	printf("\n>>>Digite o codigo para Buscar informacoes\n");
 	scanf("%s", code);
 	
 
